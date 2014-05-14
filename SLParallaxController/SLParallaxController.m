@@ -33,12 +33,15 @@
 @end
 
 
-@implementation SLParallaxController
+@implementation SLParallaxController {
+  CGFloat totalTopBarHeight;
+  NSLayoutConstraint *containerTopSpaceConstraint;
+}
 
 -(id)init{
     self =  [super init];
     if(self){
-        [self setup];
+//        [self setup];
     }
     return self;
 }
@@ -46,7 +49,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder{
     self = [super initWithCoder:aDecoder];
     if(self){
-        [self setup];
+//        [self setup];
     }
     return self;
 }
@@ -54,6 +57,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+  
+    [self setup];
     [self setupTableView];
     [self setupMapView];
 }
@@ -64,12 +70,26 @@
 }
 
 // Set all view we will need
--(void)setup{
+-(void)setup {
+  BOOL navBarPresent;
+  CGFloat navBarHeight = 0.0f;
+  if (self.navigationController && !self.navigationController.navigationBarHidden) {
+    navBarHeight = self.navigationController.navigationBar.frame.size.height;
+    navBarPresent = YES;
+  }
+  
+  CGFloat statusBarHeight = 0.0f;
+  if (![UIApplication sharedApplication].statusBarHidden) {
+    statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+  }
+  
+  totalTopBarHeight = navBarHeight + statusBarHeight;
+  
     _heighTableViewHeader       = DEFAULT_HEIGHT_HEADER;
-    _heighTableView             = SCREEN_HEIGHT_WITHOUT_STATUS_BAR;
+    _heightTableView            = self.view.frame.size.height - totalTopBarHeight;
     _minHeighTableViewHeader    = MIN_HEIGHT_HEADER;
-    _default_Y_tableView        = HEIGHT_STATUS_BAR;
-    _Y_tableViewOnBottom        = Y_DOWN_TABLEVIEW;
+    _default_Y_tableView        = 0;
+    _Y_tableViewOnBottom        = self.view.frame.size.height - totalTopBarHeight - 40;
     _minYOffsetToReach          = MIN_Y_OFFSET_TO_REACH;
     _latitudeUserUp             = CLOSE_SHUTTER_LATITUDE_MINUS;
     _latitudeUserDown           = OPEN_SHUTTER_LATITUDE_MINUS;
@@ -81,10 +101,10 @@
 }
 
 -(void)setupTableView{
-    self.tableView                  = [[UITableView alloc]  initWithFrame: CGRectMake(0, 20, 320, self.heighTableView)];
+    self.tableView                  = [[UITableView alloc]  initWithFrame: CGRectMake(0, _default_Y_tableView, 320, self.heightTableView)];
     self.tableView.tableHeaderView  = [[UIView alloc]       initWithFrame: CGRectMake(0.0, 0.0, self.view.frame.size.width, self.heighTableViewHeader)];
     [self.tableView setBackgroundColor:[UIColor clearColor]];
-    
+  
     // Add gesture to gestures
     self.tapMapViewGesture      = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                       action:@selector(handleTapMapView:)];
@@ -101,7 +121,7 @@
 }
 
 -(void)setupMapView{
-    self.mapView                        = [[MKMapView alloc] initWithFrame:CGRectMake(0, self.default_Y_mapView, 320, self.heighTableView)];
+    self.mapView                        = [[MKMapView alloc] initWithFrame:CGRectMake(0, self.default_Y_mapView, 320, self.heightTableView)];
     [self.mapView setShowsUserLocation:YES];
     self.mapView.delegate = self;
     [self.view insertSubview:self.mapView
@@ -169,7 +189,7 @@
                           delay:0.1
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
-                         self.mapView.frame             = CGRectMake(0, self.default_Y_mapView, self.mapView.frame.size.width, self.heighTableView);
+                         self.mapView.frame             = CGRectMake(0, self.default_Y_mapView, self.mapView.frame.size.width, self.heightTableView);
                          self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.0, self.headerYOffSet, self.view.frame.size.width, self.heighTableViewHeader)];
                          self.tableView.frame           = CGRectMake(0, self.default_Y_tableView, self.tableView.frame.size.width, self.tableView.frame.size.height);
                      }

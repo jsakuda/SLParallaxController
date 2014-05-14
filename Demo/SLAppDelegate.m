@@ -20,12 +20,17 @@
 
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7) {
         self.window.clipsToBounds =YES;
-        self.window.frame =  CGRectMake(0,20,self.window.frame.size.width,self.window.frame.size.height-20);
-        self.window.bounds = CGRectMake(0, 20, self.window.frame.size.width, self.window.frame.size.height);
+        self.window.frame =  CGRectMake(0, 0,self.window.frame.size.width,self.window.frame.size.height);
+        self.window.bounds = CGRectMake(0, 0, self.window.frame.size.width, self.window.frame.size.height);
     }
 
     self.window.rootViewController = [SLParallaxController new];
-    
+  
+    // for navigation controller with SLParallaxController
+//    SLParallaxController *vc = [SLParallaxController new];
+//    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+//    self.window.rootViewController = navController;
+  
     return YES;
 }
 

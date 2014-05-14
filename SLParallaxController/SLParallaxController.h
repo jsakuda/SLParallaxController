@@ -25,7 +25,7 @@
 @property (nonatomic, weak)     id<SLParallaxControllerDelegate>    delegate;
 @property (nonatomic, strong)   UITableView                         *tableView;
 @property (nonatomic, strong)   MKMapView                           *mapView;
-@property (nonatomic)           float                               heighTableView;
+@property (nonatomic)           float                               heightTableView;
 @property (nonatomic)           float                               heighTableViewHeader;
 @property (nonatomic)           float                               minHeighTableViewHeader;
 @property (nonatomic)           float                               minYOffsetToReach;
